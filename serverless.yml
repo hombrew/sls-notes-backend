@@ -16,6 +16,22 @@ service: sls-notes-backend
 app: notes
 org: mmaldonadortiz92
 
+plugins:
+  - serverless-offline
+
+custom:
+  allowedHeaders:
+    - Accept
+    - Content-Type
+    - Content-Length
+    - Authorization
+    - X-Api-Key
+    - X-Amz-Date
+    - X-Amz-Security-Token
+    - X-Amz-User-Agent
+    - app_user_id
+    - app_user_name
+
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
@@ -30,6 +46,13 @@ provider:
   endpointType: regional
   environment:
     NOTES_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
+      Resource: 'arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.NOTES_TABLE}'
 
 # you can overwrite defaults here
 #  stage: dev
@@ -64,9 +87,60 @@ provider:
 #    - exclude-me.js
 #    - exclude-me-dir/**
 
-# functions:
-#   hello:
-#     handler: handler.hello
+functions:
+  add-note:
+    handler: src/add-note/index.handler
+    description: POST /note
+    events:
+      - http:
+          path: note
+          method: post
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+  update-note:
+    handler: src/update-note/index.handler
+    description: PATCH /note
+    events:
+      - http:
+          path: note
+          method: patch
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  get-notes:
+    handler: src/get-notes/index.handler
+    description: GET /notes
+    events:
+      - http:
+          path: notes
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  get-note:
+    handler: src/get-note/index.handler
+    description: GET /note/n/{note_id}
+    events:
+      - http:
+          path: note/n/{note_id}
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
+
+  delete-note:
+    handler: src/delete-note/index.handler
+    description: DELETE /note
+    events:
+      - http:
+          path: note/t/{timestamp}
+          method: delete
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
 
 
 #    The following are a few example events you can configure
