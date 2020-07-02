@@ -1,0 +1,13 @@
+{
+  "name": "sls-notes-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.709.0",
+    "lodash": "^4.17.15",
+    "moment": "^2.27.0",
+    "serverless-offline": "^6.4.0",
+    "uuid": "^8.2.0"
+  }
+}
