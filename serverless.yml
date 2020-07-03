@@ -18,6 +18,7 @@ org: mmaldonadortiz92
 
 plugins:
   - serverless-offline
+  - serverless-domain-manager
 
 custom:
   allowedHeaders:
@@ -31,6 +32,12 @@ custom:
     - X-Amz-User-Agent
     - app_user_id
     - app_user_name
+  customDomain:
+    domainName: api.hombrew.dev
+    basePath: 'v1'
+    stage: ${self:provider.stage}
+    certificateName: hombrew.dev
+    createRoute53Record: true
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
